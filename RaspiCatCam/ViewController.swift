@@ -23,15 +23,12 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
     var audioPlayer: AVAudioPlayer?
     var audioRecorder: AVAudioRecorder?
     
-    //var camURL = "http://192.168.1.115/ios_cam.php"
-    //var soundURL = "http://192.168.1.115/uploadaudio.php"
-    
-    var camURL = "http://ay1353.myfoscam.org:8111/ios_cam.php"
-    var soundURL = "http://ay1353.myfoscam.org:8111/uploadaudio.php"
+    var camURL = "http://192.168.1.115/ios_cam.php"
+    var soundURL = "http://192.168.1.115/uploadaudio.php"
     
     // Basic Auth
-    var userid = "userid"
-    var passwd = "passwd"
+    var userid = "myid"
+    var passwd = "mypwd"
     
     let soundfile = "myaudio"
     let ext = ".wav"
