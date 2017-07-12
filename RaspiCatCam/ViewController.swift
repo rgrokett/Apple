@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import WebKit
 import AVFoundation
 
 class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDelegate {
@@ -14,7 +15,7 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
     
     @IBOutlet weak var titleNameLabel: UILabel!
     
-    @IBOutlet weak var webCamera: UIWebView!
+    @IBOutlet weak var webCamera: WKWebView!
     
     @IBOutlet weak var recordBtn: UIButton!
     @IBOutlet weak var playBtn: UIButton!
@@ -23,7 +24,11 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
     var audioRecorder: AVAudioRecorder?
     
     var camURL = "http://192.168.1.115/cam_pic_led.php"
-    var soundFileURL =  URL(fileURLWithPath: "file://myaudio.caf")
+    var soundURL = "http://192.168.1.115/uploadaudio.php"
+    
+    let soundfile = "myaudio"
+    let ext = ".wav"
+    var soundFilename =  URL(fileURLWithPath: NSTemporaryDirectory() + "myaudio.wav")
     var recId = "123"
     
     override func viewDidLoad() {
@@ -31,43 +36,54 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
         // Audio Setup
             playBtn.isEnabled = false
         
-            let fileMgr = FileManager.default
-            
-            let dirPaths = fileMgr.urls(for: .documentDirectory,
-                                        in: .userDomainMask)
-            
-            soundFileURL = dirPaths[0].appendingPathComponent("sound.caf")
+            print (soundFilename)
         
-            print (soundFileURL)
-        
-            let recordSettings =
-                [AVEncoderAudioQualityKey: AVAudioQuality.min.rawValue,
-                 AVEncoderBitRateKey: 16,
-                 AVNumberOfChannelsKey: 2,
-                 AVSampleRateKey: 44100.0] as [String : Any]
-            
-            let audioSession = AVAudioSession.sharedInstance()
-            
-            do {
-                try audioSession.setCategory(
-                    AVAudioSessionCategoryPlayAndRecord)
-            } catch let error as NSError {
-                print("audioSession error: \(error.localizedDescription)")
+        AVAudioSession.sharedInstance().requestRecordPermission () {
+            [unowned self] allowed in
+            if allowed {
+                // Microphone allowed, do what you like!
+                let recordSettings =
+                    [AVEncoderAudioQualityKey: AVAudioQuality.min.rawValue,
+                     AVEncoderBitRateKey: 16,
+                     AVNumberOfChannelsKey: 1,
+                     AVSampleRateKey: 12000.0] as [String : Any]
+                
+                let audioSession = AVAudioSession.sharedInstance()
+                
+                do {
+                    try audioSession.setCategory(
+                        AVAudioSessionCategoryPlayAndRecord)
+                } catch let error as NSError {
+                    print("audioSession error: \(error.localizedDescription)")
+                }
+                
+                do {
+                    try self.audioRecorder = AVAudioRecorder(url: self.soundFilename,
+                                                        settings: recordSettings as [String : AnyObject])
+                    self.audioRecorder?.prepareToRecord()
+                } catch let error as NSError {
+                    print("audioSession error: \(error.localizedDescription)")
+                }
+
+                
+            } else {
+                // User denied microphone. Tell them off!
+                print("audioSession: No Permission")
             }
-            
-            do {
-                try audioRecorder = AVAudioRecorder(url: soundFileURL,
-                                                    settings: recordSettings as [String : AnyObject])
-                audioRecorder?.prepareToRecord()
-            } catch let error as NSError {
-                print("audioSession error: \(error.localizedDescription)")
-            }
+        }
         
         // WEB CAMERA Setup
         let url = URL(string: camURL)
         let request = URLRequest(url: url!)
-            webCamera.loadRequest(request)
+            webCamera.load(request)
         
+        // WEB CAMERA Pull Refresh
+        /*
+        webCamera.scrollView.bounces = true
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(ViewController.refreshWebView), for: UIControlEvents.valueChanged)
+        webCamera.scrollView.addSubview(refreshControl)
+        */
         }
 
 
@@ -105,11 +121,11 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
             let endingBoundary = "--\(boundary)--"
             let contentType = "multipart/form-data;boundary=\(boundary)"
 
-            let filename = "TODO"
-            let recording: NSData? = NSData(contentsOf: soundFileURL)
+            let filename = soundfile + ext
+            let recording: NSData? = NSData(contentsOf: soundFilename)
             
-            var header = "Content-Disposition: form-data; name=\"\(filename)\"; filename=\"\(filename)\"\r\n"
-            var body = NSMutableData()
+            let header = "Content-Disposition: form-data; name=\"\(soundfile)\"; filename=\"\(filename)\"\r\n"
+            let body = NSMutableData()
             
             body.append(("\(beginningBoundary)\r\n" as NSString).data(using: String.Encoding.utf8.rawValue)!)
             body.append((header as NSString).data(using: String.Encoding.utf8.rawValue)!)
@@ -117,19 +133,21 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
             body.append(recording! as Data) // adding the recording here
             body.append(("\r\n\(endingBoundary)\r\n" as NSString).data(using: String.Encoding.utf8.rawValue)!)
             
-            var request = NSMutableURLRequest()
-            request.url = soundFileURL
+            let request = NSMutableURLRequest()
+            request.url = URL(string: soundURL)
             request.httpMethod = "POST"
             request.addValue(contentType, forHTTPHeaderField: "Content-Type")
             request.addValue(recId, forHTTPHeaderField: "REC-ID") // recId is defined elsewhere
             request.httpBody = body as Data
             
-            var session = URLSession.shared
-            var task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
+            print (request.httpBody ?? "NO DATA")
+            
+            let session = URLSession.shared
+            let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
                 
                 print("upload complete")
                 let dataStr = String(data: data!, encoding: String.Encoding(rawValue: String.Encoding.utf8.rawValue))
-                print(dataStr ?? <#default value#>)
+                print(dataStr ?? "empty audio data")
                 
             })
             
@@ -150,4 +168,12 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
         print("Audio Record Encode Error")
     }
     
+    // Web Pull Down Refresh
+    func refreshWebView(sender: UIRefreshControl) {
+        print("WEBCAM: refresh")
+        let url = URL(string: camURL)
+        let request = URLRequest(url: url!)
+        webCamera.load(request)
+        sender.endRefreshing()
+    }
 }
