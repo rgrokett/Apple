@@ -409,6 +409,7 @@
 				093D39801F09379A004E0772 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		093D39811F09379A004E0772 /* Build configuration list for PBXNativeTarget "RaspiCatCamTests" */ = {
 			isa = XCConfigurationList;
@@ -417,6 +418,7 @@
 				093D39831F09379A004E0772 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
