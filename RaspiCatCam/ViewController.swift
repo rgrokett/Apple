@@ -10,7 +10,7 @@ import UIKit
 import WebKit
 import AVFoundation
 
-class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDelegate {
+class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDelegate , WKUIDelegate{
     //MARK: Properties
     
     @IBOutlet weak var titleNameLabel: UILabel!
@@ -23,11 +23,15 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
     var audioPlayer: AVAudioPlayer?
     var audioRecorder: AVAudioRecorder?
     
-    var camURL = "http://192.168.1.115/ios_cam.php"
-    var soundURL = "http://192.168.1.115/uploadaudio.php"
+    //var camURL = "http://192.168.1.115/ios_cam.php"
+    //var soundURL = "http://192.168.1.115/uploadaudio.php"
     
-    //var camURL = "http://ay1353.myfoscam.org:8111/ios_cam.php"
-    //var soundURL = "http://ay1353.myfoscam.org:8111/uploadaudio.php"
+    var camURL = "http://ay1353.myfoscam.org:8111/ios_cam.php"
+    var soundURL = "http://ay1353.myfoscam.org:8111/uploadaudio.php"
+    
+    // Basic Auth
+    var userid = "userid"
+    var passwd = "passwd"
     
     let soundfile = "myaudio"
     let ext = ".wav"
@@ -94,6 +98,15 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+   // Basic Auth ?
+    /*
+    override func loadView() {
+        let webConfiguration = WKWebViewConfiguration()
+        webCamera = WKWebView(frame: .zero, configuration: webConfiguration)
+        webCamera.uiDelegate = self
+        view = webCamera
+    */
 
     //MARK: Actions
     
@@ -119,6 +132,13 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
                 (audioRecorder?.url)!)
             // Send to Remote Web Server
             
+            // BASIC AUTH
+            let idpw = "\(userid):\(passwd)"
+            let idpwdata = idpw.data(using: String.Encoding(rawValue: String.Encoding.utf8.rawValue))
+            let base64idpw = idpwdata!.base64EncodedString()
+            let authString = "BASIC \(base64idpw)"
+            
+            
             let boundary = "--------1439234533432299--------"
             let beginningBoundary = "--\(boundary)"
             let endingBoundary = "--\(boundary)--"
@@ -140,6 +160,7 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
             request.url = URL(string: soundURL)
             request.httpMethod = "POST"
             request.addValue(contentType, forHTTPHeaderField: "Content-Type")
+            request.addValue(authString, forHTTPHeaderField: "Authorization")
             request.addValue(recId, forHTTPHeaderField: "REC-ID") // recId is defined elsewhere
             request.httpBody = body as Data
             
@@ -170,6 +191,15 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
     func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
         print("Audio Record Encode Error")
     }
+    
+    // BASIC AUTH
+    func webCamera(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        let user = userid
+        let password = passwd
+        let credential = URLCredential(user: user, password: password, persistence: URLCredential.Persistence.forSession)
+        completionHandler(URLSession.AuthChallengeDisposition.useCredential, credential)
+    }
+
     
     // Web Pull Down Refresh
     func refreshWebView(sender: UIRefreshControl) {
