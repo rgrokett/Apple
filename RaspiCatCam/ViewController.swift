@@ -26,6 +26,8 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
     var camURL = "http://192.168.1.115/ios_cam.php"
     var soundURL = "http://192.168.1.115/uploadaudio.php"
     
+    
+    
     // Basic Auth
     var userid = "myid"
     var passwd = "mypwd"
@@ -38,9 +40,7 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
     override func viewDidLoad() {
         super.viewDidLoad()
         // Audio Setup
-            playBtn.isEnabled = false
-        
-            print (soundFilename)
+        playBtn.isEnabled = false
         
         AVAudioSession.sharedInstance().requestRecordPermission () {
             [unowned self] allowed in
@@ -58,7 +58,7 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
                     try audioSession.setCategory(
                         AVAudioSessionCategoryPlayAndRecord)
                 } catch let error as NSError {
-                    print("audioSession error: \(error.localizedDescription)")
+                    self.displayAlertMsg(userMessage: "audioSession error: \(error.localizedDescription)")
                 }
                 
                 do {
@@ -66,13 +66,13 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
                                                         settings: recordSettings as [String : AnyObject])
                     self.audioRecorder?.prepareToRecord()
                 } catch let error as NSError {
-                    print("audioSession error: \(error.localizedDescription)")
+                    self.displayAlertMsg(userMessage: "audioSession error: \(error.localizedDescription)")
                 }
 
                 
             } else {
                 // User denied microphone. Tell them off!
-                print("audioSession: No Permission")
+                self.displayAlertMsg(userMessage: "audioSession: No Permission")
             }
         }
         
@@ -175,7 +175,7 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
             task.resume()
             
         } catch let error as NSError {
-            print("audioPlayer error: \(error.localizedDescription)")
+            self.displayAlertMsg(userMessage: "audioPlayer error: \(error.localizedDescription)")
         }
         recordBtn.isEnabled = true
 
@@ -186,7 +186,7 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
     }
     
     func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
-        print("Audio Record Encode Error")
+        self.displayAlertMsg(userMessage: "Audio Record Encode Error")
     }
     
     // BASIC AUTH
@@ -205,5 +205,11 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
         let request = URLRequest(url: url!)
         webCamera.load(request)
         sender.endRefreshing()
+    }
+    
+    // Display Alert Message
+    func displayAlertMsg(userMessage: String)
+    {
+        _ = UIAlertController(title: "ALERT", message: userMessage, preferredStyle: .alert)
     }
 }
