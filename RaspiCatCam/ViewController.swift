@@ -14,27 +14,24 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
     //MARK: Properties
     
     @IBOutlet weak var titleNameLabel: UILabel!
-    
     @IBOutlet weak var webCamera: WKWebView!
-    
     @IBOutlet weak var recordBtn: UIButton!
     @IBOutlet weak var playBtn: UIButton!
     
     var audioPlayer: AVAudioPlayer?
     var audioRecorder: AVAudioRecorder?
     
-    var camURL = "http://192.168.1.115/ios_cam.php"
-    var soundURL = "http://192.168.1.115/uploadaudio.php"
-    
-    
+    let camURL = "http://192.168.1.115/ios_cam.php"
+    let soundURL = "http://192.168.1.115/uploadaudio.php"
+
     
     // Basic Auth
-    var userid = "myid"
-    var passwd = "mypwd"
+    let userid = "myid"
+    let passwd = "mypwd"
     
     let soundfile = "myaudio"
     let ext = ".wav"
-    var soundFilename =  URL(fileURLWithPath: NSTemporaryDirectory() + "myaudio.wav")
+    let soundFilename =  URL(fileURLWithPath: NSTemporaryDirectory() + "myaudio.wav")
     var recId = "123"
     
     override func viewDidLoad() {

@@ -27,7 +27,7 @@
                                 <rect key="frame" x="16" y="20" width="288" height="548"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Raspi Cat Cam" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JkS-xB-IXY">
-                                        <rect key="frame" x="63" y="0.0" width="163" height="27"/>
+                                        <rect key="frame" x="62.5" y="0.0" width="163" height="27"/>
                                         <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="24"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -41,7 +41,7 @@
                                         <dataDetectorType key="dataDetectorTypes"/>
                                     </webView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bTQ-ft-iwM">
-                                        <rect key="frame" x="106" y="340" width="77" height="77"/>
+                                        <rect key="frame" x="105.5" y="340" width="77" height="77"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="bTQ-ft-iwM" secondAttribute="height" multiplier="1:1" id="Qiy-1w-OpL"/>
                                         </constraints>
@@ -51,7 +51,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IOs-Cy-H0u">
-                                        <rect key="frame" x="114" y="437" width="60" height="70"/>
+                                        <rect key="frame" x="114" y="437" width="60" height="70.5"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="IOs-Cy-H0u" secondAttribute="height" multiplier="77:90" id="9G8-CQ-Xfe"/>
                                         </constraints>
@@ -61,9 +61,9 @@
                                         </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Kinetic Designs IoT" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VWQ-6e-4hH">
-                                        <rect key="frame" x="71" y="527" width="146" height="21"/>
+                                        <rect key="frame" x="71.5" y="527.5" width="145.5" height="20.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
+                                        <color key="textColor" red="0.55307182591623039" green="0.55307182591623039" blue="0.55307182591623039" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
